@@ -44,14 +44,23 @@ class GuiClass(Frame):
     https://github.com/pyinstaller/pyinstaller/issues/4532
     https://stackoverflow.com/questions/27637197/tkinter-window-closes-automatically-after-python-program-has-run-in-pycharm
     https://stackoverflow.com/questions/32672596/pyinstaller-loads-script-multiple-times
+    https://stackoverflow.com/questions/47692213/reducing-size-of-pyinstaller-exe
     pyinstaller -F --add-data "resources/wyjasnianie_gegacza.mp3;resources" --add-data "resources/gegacz_wyjasniony.mp3;resources" --add-data "resources/hymn_gegaczy.mp3;resources" --add-data "resources/goose.jpg;resources" gegacz_app.py
     """
     def __init__(self, master):
         super().__init__(master)
+        self.master.protocol("WM_DELETE_WINDOW", self.on_closing)
         gegacz_img_path = self.resource_path(r'resources\goose.jpg')
         self.__original_img = Image.open(gegacz_img_path)
         self.__sound_process = None
         self.run_gui()
+        
+    def on_closing(self):
+        """handle application closing"""
+        if self.__sound_process is not None:
+            self.__sound_process.terminate()
+        self.master.destroy()
+        self.master.quit()
         
     def gegaj(self):
         print('[*] gegaj')
